@@ -65,12 +65,16 @@ namespace Rest.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         //[Route("[action]")]
-        public async Task<IActionResult> SaveEmployees(TrackModel trackModel)
+        public async Task<IActionResult> SaveTrack(TrackModel trackModel)
         {
             try
             {
                 var model = await _controllerService.SaveTrack(trackModel);
-                return Ok(model);
+                if (model.IsSuccess)
+                {
+                    return Ok(model);
+                }
+                return StatusCode(500, new ResponseModel() { IsSuccess = false, Messsage = "Something went wrong, please retry later" });
             }
             catch (Exception)
             {
@@ -90,7 +94,11 @@ namespace Rest.Api.Controllers
             try
             {
                 var model = await _controllerService.DeleteTrack(id);
-                return Ok(model);
+                if (model.IsSuccess)
+                {
+                    return Ok(model);
+                }
+                return StatusCode(500, new ResponseModel() { IsSuccess = false, Messsage = "Something went wrong, please retry later" });
             }
             catch (Exception)
             {

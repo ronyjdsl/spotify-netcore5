@@ -36,7 +36,7 @@ namespace Rest.Api.Controllers
             }
             catch (Exception)
             {
-                return BadRequest();
+                return StatusCode(500, new ResponseModel() { IsSuccess = false, Messsage = "Something went wrong, please retry later" });
             }
         }
 
@@ -47,7 +47,7 @@ namespace Rest.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         // https://localhost:44367/api/CodeChallenge/CreateTrack?isrc=abc123
-        public async Task<IActionResult> CreateTrackAsync(string isrc)
+        public async Task<IActionResult> CreateTrack(string isrc)
         {
             try
             {
@@ -81,7 +81,7 @@ namespace Rest.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         // https://localhost:44367/api/CodeChallenge/GetTrackDetailsByTitle?title=Livin' on a Prayer
-        public async Task<IActionResult> GetTrackDetailsByTitleAsync(string title)
+        public async Task<IActionResult> GetTrackDetailsByTitle(string title)
         {
             try
             {
