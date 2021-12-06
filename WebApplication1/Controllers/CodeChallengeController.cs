@@ -51,6 +51,9 @@ namespace Rest.Api.Controllers
         {
             try
             {
+                var trackExists = await _trackService.GetTrackDetailsByISRC(isrc);
+                if (trackExists != null) return StatusCode(400, new ResponseModel() { IsSuccess = false, Messsage = "ISRC already exists" });
+
                 TrackModel track = await _spotifyService.GetTrackDetailsByISRCAsync(isrc);
                 if (track == null)
                 {
