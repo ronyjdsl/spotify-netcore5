@@ -8,9 +8,7 @@ using System.Threading.Tasks;
 
 namespace Rest.Api.Controllers
 {
-    //[Route("api/[controller]/[action]")]
     [Route("api/[controller]")]
-    //[Route("api")]
     public class TrackController : Controller
     {
         ITrackService _controllerService;
