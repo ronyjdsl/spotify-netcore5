@@ -27,6 +27,7 @@ namespace Data.Services
                     {
                         { new KeyValuePair<string, string>("grant_type", "client_credentials") }
                     };
+                // This has to be configurable, due to time constraints I didn't make it configurable
                 httpClient.DefaultRequestHeaders.Add("Authorization", "Basic YzhjNDliNmExMWVhNDY5MWE4OWNiZjRiODdlZDJlMDY6YzhmODJkYjRmNDQ2NGE2MDk3YmU5YmM1NjIyYTUyYzg=");
                 using (var response = await httpClient.PostAsync("https://accounts.spotify.com/api/token", new FormUrlEncodedContent(nameValueCollection)))
                 {
@@ -46,6 +47,7 @@ namespace Data.Services
             using (var httpClient = new HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Add("Authorization", string.Format("Bearer {0}", token));
+                // This has to be configurable, due to time constraints I didn't make it configurable
                 using (var response = await httpClient.GetAsync(string.Format("https://api.spotify.com/v1/search?q=isrc:{0}&type=track", isrc)))
                 {
                     if (response.IsSuccessStatusCode)
@@ -78,6 +80,7 @@ namespace Data.Services
             using (var httpClient = new HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Add("Authorization", string.Format("Bearer {0}", token));
+                // This has to be configurable, due to time constraints I didn't make it configurable
                 using (var response = await httpClient.GetAsync(string.Format("https://api.spotify.com/v1/search?q={0}&type=track", title)))
                 {
                     if (response.IsSuccessStatusCode)
