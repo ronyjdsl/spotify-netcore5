@@ -1,5 +1,7 @@
 using Data.Context;
+using Data.Repository;
 using Data.Services;
+using Data.UnitofWork;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -38,6 +40,7 @@ namespace Rest.Api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Rest.Api", Version = "v1" });
             });
             services.AddDbContext<SpotifyContext>(options => options.UseSqlServer(Configuration.GetConnectionString("SpotifyConnStr")));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ITrackService, TrackService>();
             services.AddScoped<ISpotifyService, SpotifyService>();
             services.AddHttpClient();

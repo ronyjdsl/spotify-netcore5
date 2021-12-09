@@ -17,5 +17,11 @@ namespace Data.Context
         }
 
         public DbSet<TrackModel> Track { get; set; }
+
+        // On model creating function will provide us with the ability to manage the tables properties
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

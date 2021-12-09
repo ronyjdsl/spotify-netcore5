@@ -1,6 +1,8 @@
 ﻿using Data.Context;
 using Data.Models;
+using Data.Repository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +13,15 @@ namespace Data.Services
 {
     public class TrackService : ITrackService
     {
-        private SpotifyContext _context;
-        public TrackService(SpotifyContext context)
+        private readonly ILogger<TrackService> _logger;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public TrackService(
+            ILogger<TrackService> logger,
+            IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _logger = logger;
+            _unitOfWork = unitOfWork;
         }
 
 
@@ -26,8 +33,7 @@ namespace Data.Services
                 TrackModel _temp = await GetTrackDetailsById(trackId);
                 if (_temp != null)
                 {
-                    _context.Remove<TrackModel>(_temp);
-                    _context.SaveChanges();
+                    await _unitOfWork.Tracks.Delete(trackId);
                     model.IsSuccess = true;
                     model.Messsage = "Track Deleted Successfully";
                 }
@@ -50,7 +56,7 @@ namespace Data.Services
             TrackModel track;
             try
             {
-                track = await _context.FindAsync<TrackModel>(trackId);
+                track = await _unitOfWork.Tracks.GetById(trackId);
             }
             catch (Exception)
             {
@@ -63,10 +69,10 @@ namespace Data.Services
         {
             try
             {
-                var data = await _context.Track.Where(obj => obj.ISRC == isrc).ToListAsync();
+                var data = await _unitOfWork.Tracks.Get(p => p.ISRC == isrc);
                 if (data != null && data.Count() > 0)
                 {
-                    return data[0];
+                    return data.First();
                 }
             }
             catch (Exception)
@@ -81,7 +87,7 @@ namespace Data.Services
             List<TrackModel> trackList;
             try
             {
-                trackList = await _context.Set<TrackModel>().ToListAsync();
+                trackList = (List<TrackModel>)await _unitOfWork.Tracks.All();
             }
             catch (Exception)
             {
@@ -102,22 +108,24 @@ namespace Data.Services
 
             try
             {
-                TrackModel _temp = await GetTrackDetailsById(trackModel.Id);
-                if (_temp != null)
-                {
-                    _temp.ISRC = trackModel.ISRC;
-                    _temp.Name = trackModel.Name;
-                    _temp.duration_ms = trackModel.duration_ms;
-                    _temp.is_explicit = trackModel.is_explicit;
-                    _context.Update<TrackModel>(_temp);
-                    model.Messsage = "Track Update Successfully";
-                }
-                else
-                {
-                    _context.Add<TrackModel>(trackModel);
-                    model.Messsage = "Track Inserted Successfully";
-                }
-                _context.SaveChanges();
+                await _unitOfWork.Tracks.Upsert(trackModel);
+                //TrackModel _temp = await GetTrackDetailsById(trackModel.Id);
+                //if (_temp != null)
+                //{
+                //    _temp.ISRC = trackModel.ISRC;
+                //    _temp.Name = trackModel.Name;
+                //    _temp.duration_ms = trackModel.duration_ms;
+                //    _temp.is_explicit = trackModel.is_explicit;
+                //    _context.Update<TrackModel>(_temp);
+                //    model.Messsage = "Track Update Successfully";
+                //}
+                //else
+                //{
+                //    _context.Add<TrackModel>(trackModel);
+                //    model.Messsage = "Track Inserted Successfully";
+                //}
+                //_context.SaveChanges();
+                model.Messsage = "Track Saved Successfully";
                 model.IsSuccess = true;
             }
             catch (Exception ex)
